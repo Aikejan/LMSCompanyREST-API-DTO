@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-import static jakarta.persistence.CascadeType.REFRESH;
+import static jakarta.persistence.CascadeType.*;
 
 @Getter
 @Setter
@@ -29,10 +29,15 @@ public class Instructor {
     private  String lastName;
     private  String phoneNumber;
     private String specialization;
-    @ManyToMany
+
+    @ManyToMany(cascade = {PERSIST,DETACH,REFRESH,MERGE})
     private List<Company> companies;
-    @OneToMany( cascade = {CascadeType.ALL},mappedBy = "instructors")
+
+    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "instructors")
     private List<Course> courses;
+
+    @OneToOne(cascade = ALL)
+    private User user;
 
     public Instructor(String firstName, String lastName, String phoneNumber, String specialization) {
         this.firstName = firstName;

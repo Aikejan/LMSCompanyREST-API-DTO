@@ -1,8 +1,9 @@
 package peaksoft.api;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.InstructorRequest;
 import peaksoft.dto.response.InstructorResponse;
 import peaksoft.service.InstructorService;

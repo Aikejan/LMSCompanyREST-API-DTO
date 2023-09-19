@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task,Long> {
 
-    @Query("select new peaksoft.dto.SimpleResponse(t.id,t.taskName,t.taskText,t.deadLine) from Task t where t.lesson id=:lessonId")
+    @Query("select new peaksoft.dto.response.TaskResponse(t.id,t.taskName,t.taskText,t.deadLine) from Task t where t.lesson id=:lessonId")
     List<TaskResponse> getAllTasks(Long lessonId);
 
     Optional<TaskResponse> getTaskById(Long id);

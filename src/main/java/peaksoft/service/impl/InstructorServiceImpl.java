@@ -2,7 +2,7 @@ package peaksoft.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.InstructorRequest;
 import peaksoft.dto.response.InstructorResponse;
 import peaksoft.entities.Company;
@@ -50,8 +50,8 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public List<InstructorResponse> getAllInstructors() {
-        return instructorRepository.getAllInstructors();
-
+//        return instructorRepository.getAllInstructors();
+return null;
 
     }
 
@@ -61,8 +61,8 @@ public class InstructorServiceImpl implements InstructorService {
             instructorRepository.findById(id).orElseThrow(() ->
                     new NoSuchElementException("Instructor with id: " + id + " is not found!"));
 
-            return instructorRepository.getInstructorById(id);
-
+//            return instructorRepository.getInstructorById(id);
+return null;
         } catch (Exception e) {
             throw new RuntimeException("Failed to get instructor: " + e.getMessage());
 

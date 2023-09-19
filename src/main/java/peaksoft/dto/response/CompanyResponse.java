@@ -21,8 +21,7 @@ public class CompanyResponse {
     private String country;
     private String address;
     private String phoneNumber;
-    private List<Instructor> instructor;
-    private List<Course> courses;
+
 
     public CompanyResponse(Long id, String name, String country, String address, String phoneNumber) {
         this.id = id;
@@ -32,10 +31,4 @@ public class CompanyResponse {
         this.phoneNumber = phoneNumber;
     }
 
-    public CompanyResponse(String name, String country, String address, String phoneNumber) {
-        this.name = name;
-        this.country = country;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-    }
 }

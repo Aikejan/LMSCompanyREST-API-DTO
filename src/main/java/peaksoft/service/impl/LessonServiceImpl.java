@@ -3,11 +3,12 @@ package peaksoft.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.NotIndexedCollectionException;
 import org.springframework.stereotype.Service;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.LessonRequest;
 import peaksoft.dto.response.LessonResponse;
 import peaksoft.entities.Course;
 import peaksoft.entities.Lesson;
+import peaksoft.exception.NotFoundException;
 import peaksoft.repo.CourseRepository;
 import peaksoft.repo.LessonRepository;
 import peaksoft.service.LessonService;
@@ -60,14 +61,15 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public LessonResponse getById(Long id) {
         try {
-            return lessonRepository.getLessonById(id).orElseThrow(() ->
-                    new NoSuchElementException("Lesson with id: " + id + " is not found!"));
-
+//        Lesson lessonResponse =  lessonRepository.getLessonById(id).orElseThrow(() ->
+//                    new  NoSuchElementException("Lesson with id: " + id + " is not found!"));
+            lessonRepository.findById(id).orElseThrow(() ->
+                    new NotFoundException("Lesson with id:" + id));
         } catch (Exception e) {
             throw new RuntimeException("Failed to get lesson: " + e.getMessage());
 
         }
-
+        return  new LessonResponse();
     }
 
     @Override

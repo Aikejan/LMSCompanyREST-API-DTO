@@ -25,17 +25,9 @@ public class Group {
     private String groupName;
     private String imageLink;
     private String description;
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "groups")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Course> courses;
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
+    private List<Student> students;
 
-    public Group(String groupName, String imageLink, String description, List<Course> courses, Group group) {
-        this.groupName = groupName;
-        this.imageLink = imageLink;
-        this.description = description;
-        this.courses = courses;
-        this.group = group;
-    }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "cources")
+@Table(name = "courses")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
@@ -25,18 +25,20 @@ public class Course {
     private String name;
     private ZonedDateTime dataOfStart;
     private String description;
-    @ManyToOne
-    private  Company companies;
-    @ManyToMany(mappedBy = "courses")
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
+    private  Company company;
+    @ManyToMany(mappedBy = "courses",cascade = {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH,CascadeType.MERGE})
     private List<Group> groups;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH})
     private Instructor instructors;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "course")
+    private List<Lesson> lessons;
 
-    public Course(String name, ZonedDateTime dataOfStart, String description, Company companies, List<Group> groups, Instructor instructors) {
+    public Course(String name, ZonedDateTime dataOfStart, String description, Company company, List<Group> groups, Instructor instructors) {
         this.name = name;
         this.dataOfStart = dataOfStart;
         this.description = description;
-        this.companies = companies;
+        this.company = company;
         this.groups = groups;
         this.instructors = instructors;
     }

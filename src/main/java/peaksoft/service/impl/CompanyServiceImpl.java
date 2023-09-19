@@ -2,16 +2,21 @@ package peaksoft.service.impl;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import peaksoft.dto.request.CompanyRequest;
 import peaksoft.dto.response.CompanyResponse;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.PaginationResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entities.Company;
 import peaksoft.repo.CompanyRepository;
 import peaksoft.service.CompanyService;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,39 +26,33 @@ import java.util.NoSuchElementException;
 @Transactional
 @Builder
 public class CompanyServiceImpl implements CompanyService {
-    private  final CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
 
     @Override
     public SimpleResponse saveCompany(CompanyRequest companyRequest) {
-        try {
-            Company company = new Company();
-            company.setName(companyRequest.getName());
-            company.setCountry(companyRequest.getCountry());
-            company.setAddress(companyRequest.getAddress());
-            company.setPhoneNumber(companyRequest.getPhoneNumber());
+        Company company = new Company();
+        company.setName(companyRequest.getName());
+        company.setCountry(companyRequest.getCountry());
+        company.setAddress(companyRequest.getAddress());
+        company.setPhoneNumber(companyRequest.getPhoneNumber());
 
-            if (companyRepository.existsByName(company.getName())) {
-                throw new IOException("Company name and phoneNumber must be unique");
-            }
-
-            companyRepository.save(company);
-
-            return SimpleResponse.builder()
-                    .status("SUCCESSFULLY SAVED")
-                    .message("Company with id: " + company.getName() + " is saved!")
-                    .build();
-
-        } catch (IOException e) {
-            return SimpleResponse.builder()
-                    .status("ERROR")
-                    .message("Failed to save company: " + e.getMessage())
-                    .build();
+        if (companyRepository.existsByName(company.getName())) {
+            new IOException("Company name and phoneNumber must be unique");
         }
+
+        companyRepository.save(company);
+
+        return SimpleResponse.builder()
+                .status("SUCCESSFULLY SAVED")
+                .message("Company with id: " + company.getName() + " is saved!")
+                .build();
+
     }
 
     @Override
     public List<CompanyResponse> getAllCompanies() {
-        return companyRepository.getAllCompanies();
+//        return companyRepository.getAllCompanies();
+        return null;
     }
 
 
@@ -82,9 +81,22 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
 
+    }
 
+    @Override
+    public PaginationResponse getAllPagination(int currentPage, int pageSize) {
+
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        Page<CompanyResponse> companies = companyRepository.findAllCompanies(pageable);
+        return PaginationResponse.builder()
+                .t(Collections.singletonList(companies.getContent()))
+                .currentPage(companies.getNumber())
+                .pageSize(companies.getTotalPages())
+                .build();
 
     }
+
+
 
     @Override
     public CompanyResponse findById(Long companyId) {

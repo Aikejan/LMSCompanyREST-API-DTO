@@ -1,6 +1,7 @@
 package peaksoft.service;
 
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.PaginationResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.StudentRequest;
 import peaksoft.dto.response.StudentResponse;
 
@@ -16,4 +17,6 @@ public interface StudentService {
 
     SimpleResponse blockUnblockStudent(Long studentId, Boolean block);
     List<StudentResponse> filter(String studyFormat);
+
+    PaginationResponse getAllPagination(int currentPage, int pageSize);
 }

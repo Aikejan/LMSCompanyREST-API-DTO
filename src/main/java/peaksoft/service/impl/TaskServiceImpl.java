@@ -2,7 +2,7 @@ package peaksoft.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.TaskRequest;
 import peaksoft.dto.response.TaskResponse;
 import peaksoft.entities.Lesson;
@@ -21,19 +21,6 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final LessonRepository lessonRepository;
 
-    @Override
-    public List<TaskResponse> getAllTask(Long lessonId) {
-        try {
-            lessonRepository.findById(lessonId).orElseThrow(() ->
-                    new NoSuchElementException("Lesson with id: " + lessonId + " is not found!"));
-
-            return taskRepository.getAllTasks(lessonId);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve task for lesson: " + lessonId + ". " + e.getMessage());
-
-        }
-    }
 
     @Override
     public SimpleResponse saveTask(Long lessonId, TaskRequest taskRequest) {
@@ -46,8 +33,8 @@ public class TaskServiceImpl implements TaskService {
             task.setTaskName(taskRequest.getTaskName());
             task.setTaskText(taskRequest.getTaskText());
             task.setDeadLine(taskRequest.getDeadLine());
-            lesson.setLessonName(task);
-            task.setLrsson(lesson);
+            lesson.setLessonName(taskRequest.getTaskName());
+            task.setTaskName("JS");
 
             taskRepository.save(task);
 
@@ -79,52 +66,41 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public SimpleResponse updateTask(Long id, TaskRequest taskRequest) {
-
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Task with id: " + id + " is not found!"));
-        task.setTaskName(taskRequest.getTaskName());
-        task.setTaskText(taskRequest.getTaskText());
-        task.setDeadLine(taskRequest.getDeadLine());
-        taskRepository.save(task);
-
-        return SimpleResponse.builder()
-                .status("SUCCESSFULLY UPDATE")
-                .message("Task with id: " + task.getTaskName() + " is updated!")
-                .build();
-
-    } catch(
-    Exception e)
-
-    {
-        return SimpleResponse.builder()
-                .status("ERROR")
-                .message("Failed to update task: " + e.getMessage())
-                .build();
-    }
-
-
-
-
-    @Override
-    public SimpleResponse deleteById(Long id) {
-
         try {
-            taskRepository.findById(id)
-                    .orElseThrow(() -> new NoSuchElementException("Task with id:" + id + " not found"));
-            taskRepository.deleteById(id);
+            Task task = taskRepository.findById(id).orElseThrow(() ->
+                    new NoSuchElementException("Task with id: " + id + " is not found!"));
+            task.setTaskName(taskRequest.getTaskName());
+            task.setTaskText(taskRequest.getTaskText());
+            task.setDeadLine(taskRequest.getDeadLine());
+            taskRepository.save(task);
 
             return SimpleResponse.builder()
-                    .status("SUCCESSFULLY DELETE")
-                    .message("successfully deleted!")
+                    .status("SUCCESSFULLY UPDATE")
+                    .message("Task with id: " + task.getTaskName() + " is updated!")
                     .build();
 
         } catch (Exception e) {
             return SimpleResponse.builder()
                     .status("ERROR")
-                    .message("Failed delete task: " + e.getMessage())
+                    .message("Failed to update task: " + e.getMessage())
                     .build();
-
         }
+
+
     }
+
+    @Override
+    public SimpleResponse deleteById(Long id) {
+
+        return taskRepository.getTaskById();
+    }
+
+    @Override
+    public List<TaskResponse> getAllTasks(Long lessonId) {
+
+        return taskRepository.getAllTasks(lessonId);
+    }
+
 }
+
 

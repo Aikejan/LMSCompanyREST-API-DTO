@@ -1,15 +1,17 @@
 package peaksoft.service;
 
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.GroupStudentCountResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.GroupRequest;
 import peaksoft.dto.response.GroupResponse;
 import peaksoft.entities.Course;
 
 import java.util.List;
 
-public interface GroupService<GroupStudentCountResponse> {
+public interface GroupService{
     List<GroupResponse> getAllGroups();
     SimpleResponse saveGroup(GroupRequest groupRequest);
+
 
     GroupResponse getGroupById(Long groupId);
 
@@ -17,10 +19,10 @@ public interface GroupService<GroupStudentCountResponse> {
 
     SimpleResponse deleteGroupById(Long id);
 
-    Course assignGroup(Long courseId, Long groupId);
+    SimpleResponse assignGroup(Long courseId, Long groupId);
 
     SimpleResponse addStudentToGroup(Long groupId, Long studentId);
 
-     GroupStudentCountResponse  getStudentCountByGroup(Long groupId);
+    GroupStudentCountResponse getStudentCountByGroup(Long groupId);
 
 }

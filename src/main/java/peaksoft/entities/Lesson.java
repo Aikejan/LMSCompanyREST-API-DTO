@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -21,4 +23,9 @@ public class Lesson {
 
     private  Long id;
     private String lessonName;
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH})
+    private Course course;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "lesson")
+    private List<Task> tasks;
 }

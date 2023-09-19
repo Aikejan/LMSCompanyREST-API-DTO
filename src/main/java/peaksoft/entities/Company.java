@@ -28,9 +28,9 @@ public class Company {
     private  String country;
     private  String address;
     private  String phoneNumber;
-    @ManyToMany( cascade = {MERGE,REFRESH,REMOVE,DETACH} ,mappedBy = "companies")
+    @ManyToMany(mappedBy = "companies", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
    private  List<Instructor> instructor;
-    @OneToMany( cascade = CascadeType.ALL,mappedBy = "companies")
+    @OneToMany( cascade = CascadeType.ALL,mappedBy = "company")
     private List<Course> courses;
 
     public Company(String name, String country, String address, String phoneNumber, List<Instructor> instructor, List<Course> courses) {

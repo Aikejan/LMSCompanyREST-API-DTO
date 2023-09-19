@@ -1,8 +1,13 @@
 package peaksoft.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.PaginationResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.StudentRequest;
 import peaksoft.dto.response.StudentResponse;
 import peaksoft.entities.Course;
@@ -12,12 +17,13 @@ import peaksoft.repo.CourseRepository;
 import peaksoft.repo.GroupRepository;
 import peaksoft.repo.StudentRepository;
 import peaksoft.service.StudentService;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static ch.qos.logback.classic.spi.ThrowableProxyVO.build;
+
 @Service
+@Slf4j   //   1 ish araketti koncoldon cmc kylyp jazyp beret
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
@@ -28,6 +34,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> getAllStudents(Long groupId) {
         return studentRepository.getAllStudents(groupId);
+
     }
 
     @Override
@@ -39,10 +46,10 @@ public class StudentServiceImpl implements StudentService {
             Student student = new Student();
             student.setFirstName(studentRequest.getFirstName());
             student.setLastName(studentRequest.getLastName());
-            student.setPhoneNumber(studentRequest.getPhoneNumber);
-            student.setEmail(studentRequest.email());
+            student.setPhoneNumber(studentRequest.getPhoneNumber());
+            student.setEmail(studentRequest.getEmail());
             student.setStudyFormat(studentRequest.getStudyFormat());
-            group.addStudent(student);
+            student.aadStudent(group);
             student.setGroup(group);
 
             studentRepository.save(student);
@@ -58,19 +65,26 @@ public class StudentServiceImpl implements StudentService {
                     .message("Failed to save student: " + e.getMessage())
                     .build();
         }
+        return null;
         }
 
     @Override
     public StudentResponse getById(Long id) {
-        try {
-            return studentRepository.getStudentById(id).orElseThrow(() ->
-                    new NoSuchElementException("Student with id: " + id + " is not found!"));
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get student: " + e.getMessage());
-
+        studentRepository.getStudentById(id).orElseThrow(() -> {
+            String message = "Student with id: " + id + " is not found!";  // USHUL CMS LODTON JANA EXCEPTIONDON CHGARYP BERIP TURAT
+            log.error(message);
+            return    new NoSuchElementException(message));
         }
+
+
     }
+
+
+
+
+
+
+
 
     @Override
     public SimpleResponse updateStudent(Long id, StudentRequest studentRequest) {
@@ -78,12 +92,6 @@ public class StudentServiceImpl implements StudentService {
             Student student = studentRepository.findById(id).orElseThrow(() ->
                     new NoSuchElementException("Student with id: " + id + " is not found!"));
 
-            student.setFirstName(studentRequest.getFirstName());
-            student.setLastName(studentRequest.getLastName());
-            student.setPhoneNumber(studentRequest.getPhoneNumber);
-            student.setEmail(studentRequest.getEmail());
-            student.setStudyFormat(studentRequest.getStudyFormat());
-            studentRepository.save(student);
 
             return SimpleResponse.builder()
                     .status("SUCCESSFULLY UPDATE")
@@ -147,28 +155,26 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentResponse> filter(String studyFormat) {
         try {
-            Student student = new Student();
-            if (studyFormat.equals("ONLINE")) {
-                return studentRepository.getFilterOnLine();
-
-            } else if (studyFormat.equals("OFFLINE")) {
-                return studentRepository.getFilterOffLine();
-
-            }
-            return Collections.singletonList(StudentResponse.builder().
-                    id(student.getId())
-                    .firstName(student.getFirstName())
-                    .lastName(student.getLastName())
-                    .email(student.getEmail())
-                    .phoneNumber(student.getPhoneNumber())
-                    .isBlocked(student.getIsBlocked())
-                    .studyFormat(student.getStudyFormat())
-                    .build());
+                   .build());
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to filter student: " + e.getMessage());
 
         }
+        return null;
     }
+
+    @Override
+    public PaginationResponse getAllPagination(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage,pageSize);
+        Page<StudentResponse> allStudents = studentRepository.getAllStudents((java.awt.print.Pageable) pageable);
+        return PaginationResponse.builder()
+                .students(allStudents.getContent())
+                .currentPage(allStudents.getNumber())
+                .pageSize(allStudents.getTotalPages())
+                .build();
     }
+
+    }
+
 

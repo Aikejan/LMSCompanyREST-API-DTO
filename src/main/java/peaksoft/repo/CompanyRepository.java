@@ -1,5 +1,7 @@
 package peaksoft.repo;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<CompanyResponse> getAllCompanies();
 
     boolean existsByName(String name);
-    @Query("select new peaksoft.dto.response.CompanyResponse(c.name,c.country,c.address,c.phoneNumber)from Company  c where c.id = :id")
+    @Query("select new peaksoft.dto.response.CompanyResponse(c.id,c.name,c.country,c.address,c.phoneNumber)from Company  c where c.id = :id")
     CompanyResponse getCompanyById(Long companyId);
+    @Query("select  new peaksoft.dto.response.CompanyResponse(c.id,c.name,c.country,c.address,c.phoneNumber) from  Company  c")
+    Page<CompanyResponse> findAllCompanies(Pageable pageable);
 }

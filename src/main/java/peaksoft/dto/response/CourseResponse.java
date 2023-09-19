@@ -24,12 +24,12 @@ public class CourseResponse {
     private List<Group> groups;
     private List<Instructor> instructors;
 
-    public CourseResponse(ZonedDateTime dataOfStart, String description, Company company, List<Group> groups, List<Instructor> instructors) {
+    public CourseResponse(Long id, String name, ZonedDateTime dataOfStart, String description, Company company) {
+        this.id = id;
+        this.name = name;
         this.dataOfStart = dataOfStart;
         this.description = description;
         this.company = company;
-        this.groups = groups;
-        this.instructors = instructors;
     }
 
     public CourseResponse(Long id, String name, ZonedDateTime dataOfStart, String description) {

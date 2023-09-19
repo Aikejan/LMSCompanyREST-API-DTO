@@ -2,18 +2,16 @@ package peaksoft.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.CourseRequest;
 import peaksoft.dto.response.CourseResponse;
 import peaksoft.entities.Company;
 import peaksoft.entities.Course;
-import peaksoft.entities.Instructor;
 import peaksoft.repo.CompanyRepository;
 import peaksoft.repo.CourseRepository;
 import peaksoft.repo.InstructorRepository;
 import peaksoft.service.CourseService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -22,51 +20,16 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
-    private  final CourseRepository courseRepository;
-    private  final CompanyRepository companyRepository;
+    private final CourseRepository courseRepository;
+    private final CompanyRepository companyRepository;
     private final InstructorRepository instructorRepository;
 
 
     @Override
-    public CourseResponse saveCourse(Long instructorId, Long companyId, CourseRequest courseRequest) {
-
-        try {
-            Company company = companyRepository.findById(companyId).orElseThrow(() ->
-                    new NoSuchElementException("Company with id: " + companyId + " is not found!"));
-
-            Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() ->
-                    new NoSuchElementException("Instructor with id: " + instructorId + " is not found!"));
-
-            Course course = new Course();
-            course.setName(courseRequest.getName());
-            course.setDataOfStart(courseRequest.getDataOfStart());
-            course.setDescription(courseRequest.getDescription());
-            List<Course>courses=new ArrayList<>();
-            courses.add(course);
-            company.setCourses(courses);
-            course.setCompanies(company);
-            instructor.getCourses().add(course);
-            course.setInstructors(instructor);
-
-            courseRepository.save(course);
-
-            return new CourseResponse(course.getId(),
-                    course.getName(), course.getDataOfStart(), course.getDescription());
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save course: " + e.getMessage());
-        }
-
-
-
-    }
-
-    @Override
     public List<CourseResponse> getAllCourse() {
-        return  courseRepository.getAllCourse();
+        return courseRepository.getAllCourse();
 
     }
-
 
 
     @Override
@@ -79,33 +42,31 @@ public class CourseServiceImpl implements CourseService {
         }
 
 
-
     }
 
 
     @Override
-    public SimpleResponse updateCourse(Long id, CourseRequest courseRequest) { try {
-        Course course = courseRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Course with id: " + id + " is not found!"));
+    public SimpleResponse updateCourse(Long id, CourseRequest courseRequest) {
+        try {
+            Course course = courseRepository.findById(id).orElseThrow(() ->
+                    new NoSuchElementException("Course with id: " + id + " is not found!"));
 
-        course.setName(courseRequest.getName());
-        course.setDataOfStart(courseRequest.getDataOfStart());
-        course.setDescription(courseRequest.getDescription());
-        courseRepository.save(course);
+            course.setName(courseRequest.getName());
+            course.setDataOfStart(courseRequest.getDataOfStart());
+            course.setDescription(courseRequest.getDescription());
+            courseRepository.save(course);
 
-        return SimpleResponse.builder()
-                .status("SUCCESSFULLY UPDATE!")
-                .message("Course with id: " + course.getName() + " is updated!")
-                .build();
+            return SimpleResponse.builder()
+                    .status("SUCCESSFULLY UPDATE!")
+                    .message("Course with id: " + course.getName() + " is updated!")
+                    .build();
 
-    } catch (Exception e) {
-        return SimpleResponse.builder()
-                .status("ERROR")
-                .message("Failed to update course: " + e.getMessage())
-                .build();
-    }
-
-
+        } catch (Exception e) {
+            return SimpleResponse.builder()
+                    .status("ERROR")
+                    .message("Failed to update course: " + e.getMessage())
+                    .build();
+        }
 
 
     }
@@ -126,7 +87,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
     @Override
     public List<CourseResponse> findAllSorted() {
 
@@ -137,7 +97,25 @@ public class CourseServiceImpl implements CourseService {
             throw new RuntimeException("Failed to retrieve sorted courses: " + e.getMessage());
         }
     }
+
+    @Override
+    public SimpleResponse saveCourseToCompany(Long companyId, CourseRequest courseRequest) {
+        Company company = companyRepository.findById(companyId).orElseThrow(() ->
+                new NoSuchElementException("Not found Company"));
+        Course course = new Course();
+        course.setName(courseRequest.getName());
+        course.setDataOfStart(courseRequest.getDataOfStart());
+        course.setDescription(courseRequest.getDescription());
+        course.setCompany(company);
+        courseRepository.save(course);
+
+
+        return SimpleResponse.builder()
+                .status("SUCCESSFULLY SAVED")
+                .message("Company with id: " + course.getName() + " is saved!")
+                .build();
     }
+}
 
 
 

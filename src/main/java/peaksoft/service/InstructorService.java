@@ -1,6 +1,6 @@
 package peaksoft.service;
 
-import peaksoft.dto.SimpleResponse;
+import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.request.InstructorRequest;
 import peaksoft.dto.response.InstructorResponse;
 
